@@ -1,26 +1,48 @@
 @import "tailwindcss";
 
+/* Pressroom-style theme variables */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --pressroom-dark: #2d2d2d;
+  --pressroom-darker: #1a1a1a;
+  --pressroom-accent: #c0392b;
+  --pressroom-accent-hover: #a93226;
+  --pressroom-text: #333;
+  --pressroom-text-muted: #666;
+  --pressroom-border: #e0e0e0;
+  --pressroom-bg: #fafafa;
+  --pressroom-white: #ffffff;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: var(--pressroom-bg);
+  --color-foreground: var(--pressroom-text);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+body {
+  background: var(--pressroom-bg);
+  color: var(--pressroom-text);
+  font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Pressroom section headings */
+.pressroom-section-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--pressroom-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding-bottom: 0.75rem;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid var(--pressroom-accent);
+}
+
+/* Link accent */
+a.pressroom-link {
+  color: var(--pressroom-accent);
+  transition: color 0.15s ease;
+}
+a.pressroom-link:hover {
+  color: var(--pressroom-accent-hover);
 }

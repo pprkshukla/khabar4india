@@ -28,8 +28,10 @@ export async function generateMetadata({ params }) {
   if (!slug) return { title: "Article | " + SITE_NAME };
   const article = await getArticleBySlug(slug);
   if (!article) return { title: "Article | " + SITE_NAME };
-  const title = article.fields?.metaTitle || article.fields?.title || "Untitled";
-  const description = article.fields?.metaDescription || article.fields?.excerpt || "";
+  const title =
+    article.fields?.metaTitle || article.fields?.title || "Untitled";
+  const description =
+    article.fields?.metaDescription || article.fields?.excerpt || "";
   return {
     title: `${title} | ${SITE_NAME}`,
     description: description.slice(0, 160),
@@ -38,7 +40,9 @@ export async function generateMetadata({ params }) {
 
 export async function generateStaticParams() {
   const articles = await getArticles({ limit: 100 });
-  return (articles || []).map((a) => ({ slug: a.fields?.slug || a.sys.id }));
+  return (articles || []).map((a) => ({
+    slug: a.fields?.slug || a.sys.id,
+  }));
 }
 
 export default async function ArticlePage({ params }) {
@@ -61,20 +65,22 @@ export default async function ArticlePage({ params }) {
     <article className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
       <Link
         href="/blog"
-        className="mb-6 inline-block text-sm font-medium text-amber-700 hover:underline"
+        className="mb-6 inline-block text-sm font-medium text-[#c0392b] hover:underline"
       >
         ← Back to Blog
       </Link>
 
       <header className="mb-8">
-        <div className="flex flex-wrap items-center gap-2 text-sm text-stone-500">
-          <time dateTime={publishedDate}>{formatDate(publishedDate)}</time>
+        <div className="flex flex-wrap items-center gap-2 text-sm text-[#666]">
+          <time dateTime={publishedDate}>
+            {formatDate(publishedDate)}
+          </time>
           {category?.name && (
             <>
               <span>·</span>
               <Link
                 href={`/blog?category=${category.slug || ""}`}
-                className="font-medium uppercase tracking-wide text-amber-700 hover:underline"
+                className="font-medium uppercase tracking-wide text-[#c0392b] hover:underline"
               >
                 {category.name}
               </Link>
@@ -83,20 +89,20 @@ export default async function ArticlePage({ params }) {
           {author?.name && (
             <>
               <span>·</span>
-              <span className="text-stone-600">By {author.name}</span>
+              <span>By {author.name}</span>
             </>
           )}
         </div>
-        <h1 className="mt-2 text-3xl font-bold text-amber-900 sm:text-4xl">
+        <h1 className="mt-2 text-3xl font-bold text-[#2d2d2d] sm:text-4xl">
           {title}
         </h1>
         {excerpt && (
-          <p className="mt-4 text-lg text-stone-600">{excerpt}</p>
+          <p className="mt-4 text-lg text-[#666]">{excerpt}</p>
         )}
       </header>
 
       {imageUrl && (
-        <div className="relative mb-8 aspect-video overflow-hidden rounded-lg bg-stone-100">
+        <div className="relative mb-8 aspect-video overflow-hidden border border-[#e0e0e0] bg-[#eee]">
           <Image
             src={imageUrl}
             alt={title}
@@ -113,10 +119,10 @@ export default async function ArticlePage({ params }) {
       </div>
 
       {author && (
-        <footer className="mt-10 border-t border-amber-200/40 pt-6">
+        <footer className="mt-10 border-t border-[#e0e0e0] pt-6">
           <div className="flex items-start gap-4">
             {author.avatar?.fields?.file?.url && (
-              <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full bg-stone-200">
+              <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full bg-[#e0e0e0]">
                 <Image
                   src={
                     author.avatar.fields.file.url.startsWith("//")
@@ -131,12 +137,12 @@ export default async function ArticlePage({ params }) {
               </div>
             )}
             <div>
-              <p className="font-semibold text-stone-900">{author.name}</p>
+              <p className="font-semibold text-[#2d2d2d]">{author.name}</p>
               {author.role && (
-                <p className="text-sm text-amber-700">{author.role}</p>
+                <p className="text-sm text-[#c0392b]">{author.role}</p>
               )}
               {author.bio && (
-                <p className="mt-1 text-sm text-stone-600">{author.bio}</p>
+                <p className="mt-1 text-sm text-[#666]">{author.bio}</p>
               )}
             </div>
           </div>

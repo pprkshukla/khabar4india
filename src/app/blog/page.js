@@ -1,4 +1,8 @@
-import { getArticles, getArticlesByCategory, getCategories } from "@/lib/contentful";
+import {
+  getArticles,
+  getArticlesByCategory,
+  getCategories,
+} from "@/lib/contentful";
 import ArticleCard from "@/components/ArticleCard";
 import Link from "next/link";
 
@@ -11,7 +15,8 @@ export default async function BlogPage({ searchParams }) {
   let articles;
   if (categorySlug && categories?.length) {
     const category = categories.find(
-      (c) => (c.fields?.slug || "").toLowerCase() === categorySlug.toLowerCase()
+      (c) =>
+        (c.fields?.slug || "").toLowerCase() === categorySlug.toLowerCase()
     );
     if (category) {
       articles = await getArticlesByCategory(category.sys.id, 50);
@@ -24,19 +29,21 @@ export default async function BlogPage({ searchParams }) {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-      <h1 className="mb-2 text-3xl font-bold text-amber-900">Blog & Articles</h1>
-      <p className="mb-8 text-stone-600">
-        Explore articles on Hindu religion, history, and culture.
-      </p>
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-[#2d2d2d]">Blog & Articles</h1>
+        <p className="mt-2 text-[#666]">
+          Explore articles on Hindu religion, history, and culture.
+        </p>
+      </div>
 
       {categories?.length > 0 && (
         <div className="mb-8 flex flex-wrap gap-2">
           <Link
             href="/blog"
-            className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+            className={`rounded px-4 py-2 text-sm font-medium transition ${
               !categorySlug
-                ? "bg-amber-600 text-white"
-                : "bg-amber-100 text-amber-800 hover:bg-amber-200"
+                ? "bg-[#c0392b] text-white"
+                : "bg-[#f0f0f0] text-[#2d2d2d] hover:bg-[#e0e0e0]"
             }`}
           >
             All
@@ -45,10 +52,10 @@ export default async function BlogPage({ searchParams }) {
             <Link
               key={cat.sys.id}
               href={`/blog?category=${cat.fields?.slug || ""}`}
-              className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+              className={`rounded px-4 py-2 text-sm font-medium transition ${
                 categorySlug === (cat.fields?.slug || "")
-                  ? "bg-amber-600 text-white"
-                  : "bg-amber-100 text-amber-800 hover:bg-amber-200"
+                  ? "bg-[#c0392b] text-white"
+                  : "bg-[#f0f0f0] text-[#2d2d2d] hover:bg-[#e0e0e0]"
               }`}
             >
               {cat.fields?.name}
@@ -64,10 +71,13 @@ export default async function BlogPage({ searchParams }) {
           ))}
         </div>
       ) : (
-        <div className="rounded-lg border border-amber-200 bg-amber-50/50 p-8 text-center">
-          <p className="text-stone-600">No articles found.</p>
+        <div className="rounded-lg border border-[#e0e0e0] bg-white p-10 text-center">
+          <p className="text-[#666]">No articles found.</p>
           {categorySlug && (
-            <Link href="/blog" className="mt-2 inline-block text-amber-700 hover:underline">
+            <Link
+              href="/blog"
+              className="mt-4 inline-block text-[#c0392b] hover:underline"
+            >
               View all articles
             </Link>
           )}
