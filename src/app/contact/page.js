@@ -3,10 +3,18 @@ import RichText from "@/components/RichText";
 
 export const revalidate = 60;
 
-export const metadata = {
-  title: "Contact Us | Khabar for India",
-  description: "Get in touch with Khabar for India.",
-};
+const SITE_NAME = "Khabar for India";
+
+export async function generateMetadata() {
+  const page = await getPageBySlug("contact-us");
+  const title = page?.fields?.metaTitle || page?.fields?.title || "Contact Us";
+  const description =
+    page?.fields?.metaDescription || "Get in touch with Khabar for India.";
+  return {
+    title: `${title} | ${SITE_NAME}`,
+    description: description.slice(0, 160),
+  };
+}
 
 export default async function ContactPage() {
   const page = await getPageBySlug("contact-us");

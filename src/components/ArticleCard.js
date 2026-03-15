@@ -24,6 +24,7 @@ export default function ArticleCard({ article, variant = "default" }) {
   const publishedDate = article?.fields?.publishedDate || "";
   const category = article?.fields?.category?.fields?.name || "";
   const categorySlug = article?.fields?.category?.fields?.slug || "";
+  const author = article?.fields?.author?.fields?.name;
   const featuredImage = article?.fields?.featuredImage;
   const imageUrl = featuredImage ? getImageUrl(featuredImage) : null;
 
@@ -45,7 +46,7 @@ export default function ArticleCard({ article, variant = "default" }) {
         </Link>
       )}
       <div className={isCompact ? "min-w-0 flex-1" : "flex flex-1 flex-col p-4"}>
-        <div className="flex items-center gap-2 text-xs text-stone-500">
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-0 text-xs text-stone-500">
           <time dateTime={publishedDate}>{formatDate(publishedDate)}</time>
           {category && (
             <>
@@ -56,6 +57,12 @@ export default function ArticleCard({ article, variant = "default" }) {
               >
                 {category}
               </Link>
+            </>
+          )}
+          {author && (
+            <>
+              <span>·</span>
+              <span>By {author}</span>
             </>
           )}
         </div>

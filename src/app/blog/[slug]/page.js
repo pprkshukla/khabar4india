@@ -6,6 +6,8 @@ import RichText from "@/components/RichText";
 
 export const revalidate = 60;
 
+const SITE_NAME = "Khabar for India";
+
 function getImageUrl(asset) {
   if (!asset?.fields?.file?.url) return null;
   const url = asset.fields.file.url;
@@ -19,6 +21,19 @@ function formatDate(dateStr) {
     month: "long",
     year: "numeric",
   });
+}
+
+export async function generateMetadata({ params }) {
+  const slug = params?.slug;
+  if (!slug) return { title: "Article | " + SITE_NAME };
+  const article = await getArticleBySlug(slug);
+  if (!article) return { title: "Article | " + SITE_NAME };
+  const title = article.fields?.metaTitle || article.fields?.title || "Untitled";
+  const description = article.fields?.metaDescription || article.fields?.excerpt || "";
+  return {
+    title: `${title} | ${SITE_NAME}`,
+    description: description.slice(0, 160),
+  };
 }
 
 export async function generateStaticParams() {
@@ -38,6 +53,7 @@ export default async function ArticlePage({ params }) {
   const excerpt = article.fields?.excerpt || "";
   const publishedDate = article.fields?.publishedDate || "";
   const category = article.fields?.category?.fields;
+  const author = article.fields?.author?.fields;
   const featuredImage = article.fields?.featuredImage;
   const imageUrl = featuredImage ? getImageUrl(featuredImage) : null;
 
@@ -62,6 +78,12 @@ export default async function ArticlePage({ params }) {
               >
                 {category.name}
               </Link>
+            </>
+          )}
+          {author?.name && (
+            <>
+              <span>·</span>
+              <span className="text-stone-600">By {author.name}</span>
             </>
           )}
         </div>
@@ -89,6 +111,37 @@ export default async function ArticlePage({ params }) {
       <div className="prose-custom">
         {body ? <RichText content={body} /> : null}
       </div>
+
+      {author && (
+        <footer className="mt-10 border-t border-amber-200/40 pt-6">
+          <div className="flex items-start gap-4">
+            {author.avatar?.fields?.file?.url && (
+              <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full bg-stone-200">
+                <Image
+                  src={
+                    author.avatar.fields.file.url.startsWith("//")
+                      ? `https:${author.avatar.fields.file.url}`
+                      : author.avatar.fields.file.url
+                  }
+                  alt={author.name}
+                  fill
+                  className="object-cover"
+                  sizes="56px"
+                />
+              </div>
+            )}
+            <div>
+              <p className="font-semibold text-stone-900">{author.name}</p>
+              {author.role && (
+                <p className="text-sm text-amber-700">{author.role}</p>
+              )}
+              {author.bio && (
+                <p className="mt-1 text-sm text-stone-600">{author.bio}</p>
+              )}
+            </div>
+          </div>
+        </footer>
+      )}
     </article>
   );
 }

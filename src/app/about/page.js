@@ -3,11 +3,19 @@ import RichText from "@/components/RichText";
 
 export const revalidate = 60;
 
-export const metadata = {
-  title: "About Us | Khabar for India",
-  description:
-    "Learn about Khabar for India and our mission to share Hindu Dharma, history, and culture.",
-};
+const SITE_NAME = "Khabar for India";
+
+export async function generateMetadata() {
+  const page = await getPageBySlug("about-us");
+  const title = page?.fields?.metaTitle || page?.fields?.title || "About Us";
+  const description =
+    page?.fields?.metaDescription ||
+    "Learn about Khabar for India and our mission to share Hindu Dharma, history, and culture.";
+  return {
+    title: `${title} | ${SITE_NAME}`,
+    description: description.slice(0, 160),
+  };
+}
 
 export default async function AboutPage() {
   const page = await getPageBySlug("about-us");

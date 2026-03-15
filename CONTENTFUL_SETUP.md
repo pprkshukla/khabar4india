@@ -41,7 +41,22 @@ Used for article topics (e.g. Scriptures, Philosophy, Festivals).
 
 ---
 
-### Content type 2: **Article**
+### Content type 2: **Author**
+
+Used for article authors (optional).
+
+| Field name | Field ID | Type       | Notes                    |
+|------------|----------|------------|--------------------------|
+| Name       | `name`   | Short text | Required                 |
+| Role       | `role`   | Short text | Optional; e.g. "Editor"  |
+| Bio        | `bio`    | Long text  | Optional; short bio      |
+| Avatar     | `avatar` | Media (1)  | Optional; profile image  |
+
+**Save** the content type.
+
+---
+
+### Content type 3: **Article**
 
 Used for blog/articles.
 
@@ -50,30 +65,42 @@ Used for blog/articles.
 | Title          | `title`          | Short text  | Required                        |
 | Slug           | `slug`           | Short text  | Required, unique; URL path      |
 | Excerpt        | `excerpt`        | Long text   | Optional; summary for cards     |
-| Body           | `body`           | Rich text   | Required; main content         |
-| Featured Image | `featuredImage`  | Media (1)   | Optional; one image              |
+| Body           | `body`           | Rich text   | Required; main content          |
+| Featured Image | `featuredImage`  | Media (1)   | Optional; one image             |
 | Category       | `category`       | Reference   | Reference to **Category** (1)   |
+| Author         | `author`         | Reference   | Reference to **Author** (1); optional |
 | Published Date | `publishedDate`  | Date & time | Required; for ordering/display  |
+| Meta Title     | `metaTitle`      | Short text  | Optional; SEO title (falls back to Title) |
+| Meta Description | `metaDescription` | Long text | Optional; SEO description (falls back to Excerpt) |
 
 **Save** the content type.
 
 ---
 
-### Content type 3: **Page**
+### Content type 4: **Page**
 
 Used for static pages (About Us, Contact Us, etc.).
 
-| Field name | Field ID | Type       | Notes                          |
-|------------|----------|------------|---------------------------------|
-| Title      | `title`  | Short text | Required                        |
-| Slug       | `slug`   | Short text | Required, unique; e.g. `about-us`, `contact-us` |
-| Body       | `body`   | Rich text  | Required; page content          |
+| Field name       | Field ID         | Type       | Notes                          |
+|------------------|------------------|------------|---------------------------------|
+| Title            | `title`          | Short text | Required                        |
+| Slug             | `slug`           | Short text | Required, unique; e.g. `about-us`, `contact-us` |
+| Body             | `body`           | Rich text  | Required; page content          |
+| Meta Title       | `metaTitle`      | Short text | Optional; SEO title             |
+| Meta Description | `metaDescription` | Long text | Optional; SEO description       |
 
 **Save** the content type.
 
 ---
 
 ## Step 3: Add content
+
+### Authors (optional)
+
+1. **Content → Add entry → Author**
+2. Create entries, e.g.:
+   - Name: `Your Name`, Role: `Editor`, Bio: Short bio, Avatar: optional image
+3. **Publish** each. You can then assign an author to any Article.
 
 ### Categories
 
@@ -89,23 +116,23 @@ Used for static pages (About Us, Contact Us, etc.).
 ### Articles
 
 1. **Content → Add entry → Article**
-2. Fill: Title, Slug (e.g. `intro-to-vedas`), Excerpt, Body (rich text), Category, Published Date, and optionally Featured Image.
+2. Fill: Title, Slug (e.g. `intro-to-vedas`), Excerpt, Body (rich text), Category, Published Date. Optionally: Featured Image, **Author**, **Meta Title**, **Meta Description**.
 3. **Publish**.
 
 ### Pages
 
 1. **About Us**  
    - **Content → Add entry → Page**  
-   - Title: `About Us`  
-   - Slug: `about-us`  
+   - Title: `About Us`, Slug: `about-us`  
    - Body: your about content (rich text)  
+   - Optionally: **Meta Title**, **Meta Description** for SEO  
    - **Publish**
 
 2. **Contact Us**  
    - **Content → Add entry → Page**  
-   - Title: `Contact Us`  
-   - Slug: `contact-us`  
+   - Title: `Contact Us`, Slug: `contact-us`  
    - Body: contact info, address, email, etc.  
+   - Optionally: **Meta Title**, **Meta Description**  
    - **Publish**
 
 ---
@@ -115,8 +142,9 @@ Used for static pages (About Us, Contact Us, etc.).
 The app expects these exact field IDs:
 
 - **Category:** `name`, `slug`
-- **Article:** `title`, `slug`, `excerpt`, `body`, `featuredImage`, `category`, `publishedDate`
-- **Page:** `title`, `slug`, `body`
+- **Author:** `name`, `role`, `bio`, `avatar`
+- **Article:** `title`, `slug`, `excerpt`, `body`, `featuredImage`, `category`, `author`, `publishedDate`, `metaTitle`, `metaDescription`
+- **Page:** `title`, `slug`, `body`, `metaTitle`, `metaDescription`
 
 If you change them in Contentful, update the code in `src/lib/contentful.js` and components (e.g. `ArticleCard.js`, `RichText.js`, page files) to use the new IDs.
 
@@ -154,7 +182,8 @@ To show draft/unpublished entries:
 | Content type | Purpose        | Example slugs / usage     |
 |-------------|----------------|---------------------------|
 | Category    | Article topics | `scriptures`, `festivals`  |
-| Article     | Blog posts     | any slug, e.g. `intro-vedas` |
-| Page        | Static pages   | `about-us`, `contact-us`   |
+| Author      | Article author | optional reference on Article |
+| Article     | Blog posts     | any slug, e.g. `intro-vedas`; supports Author + SEO fields |
+| Page        | Static pages   | `about-us`, `contact-us`; supports SEO fields |
 
 After creating these types and entries, the site will load all content from Contentful.
