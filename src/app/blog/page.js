@@ -1,97 +1,32 @@
-import {
-  getArticles,
-  getArticlesByCategory,
-  getCategories,
-} from "@/lib/contentful";
-import ArticleCard from "@/components/ArticleCard";
-import Link from "next/link";
+import { Suspense } from "react";
+import { getArticles, getCategories } from "@/lib/contentful";
+import BlogListing from "@/components/BlogListing";
 
 export const revalidate = 60;
 
-function firstSearchParam(value) {
-  if (value == null) return null;
-  const s = Array.isArray(value) ? value[0] : value;
-  const trimmed = String(s).trim();
-  return trimmed || null;
-}
-
-export default async function BlogPage({ searchParams }) {
-  const sp = await searchParams;
-  const categorySlug = firstSearchParam(sp?.category);
-  const categories = await getCategories();
-
-  let articles;
-  if (categorySlug && categories?.length) {
-    const category = categories.find(
-      (c) =>
-        (c.fields?.slug || "").toLowerCase() === categorySlug.toLowerCase()
-    );
-    if (category) {
-      articles = await getArticlesByCategory(category.sys.id, 50);
-    } else {
-      articles = await getArticles({ limit: 50 });
-    }
-  } else {
-    articles = await getArticles({ limit: 50 });
-  }
+export default async function BlogPage() {
+  const [articles, categories] = await Promise.all([
+    getArticles({ limit: 50 }),
+    getCategories(),
+  ]);
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-[#2d2d2d]">Blog & Articles</h1>
-        <p className="mt-2 text-[#666]">
-          Explore articles on Hindu religion, history, and culture.
-        </p>
-      </div>
-
-      {categories?.length > 0 && (
-        <div className="mb-8 flex flex-wrap gap-2">
-          <Link
-            href="/blog"
-            className={`rounded px-4 py-2 text-sm font-medium transition ${
-              !categorySlug
-                ? "bg-[#c0392b] text-white"
-                : "bg-[#f0f0f0] text-[#2d2d2d] hover:bg-[#e0e0e0]"
-            }`}
-          >
-            All
-          </Link>
-          {categories.map((cat) => (
-            <Link
-              key={cat.sys.id}
-              href={`/blog?category=${encodeURIComponent(cat.fields?.slug || "")}`}
-              className={`rounded px-4 py-2 text-sm font-medium transition ${
-                (cat.fields?.slug || "").toLowerCase() ===
-                (categorySlug || "").toLowerCase()
-                  ? "bg-[#c0392b] text-white"
-                  : "bg-[#f0f0f0] text-[#2d2d2d] hover:bg-[#e0e0e0]"
-              }`}
-            >
-              {cat.fields?.name}
-            </Link>
-          ))}
+    <Suspense
+      fallback={
+        <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+          <div className="mb-8 h-10 max-w-md animate-pulse rounded bg-[#eee]" />
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {[1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="h-64 animate-pulse rounded border border-[#e0e0e0] bg-[#f5f5f5]"
+              />
+            ))}
+          </div>
         </div>
-      )}
-
-      {articles?.length > 0 ? (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {articles.map((article) => (
-            <ArticleCard key={article.sys.id} article={article} />
-          ))}
-        </div>
-      ) : (
-        <div className="rounded-lg border border-[#e0e0e0] bg-white p-10 text-center">
-          <p className="text-[#666]">No articles found.</p>
-          {categorySlug && (
-            <Link
-              href="/blog"
-              className="mt-4 inline-block text-[#c0392b] hover:underline"
-            >
-              View all articles
-            </Link>
-          )}
-        </div>
-      )}
-    </div>
+      }
+    >
+      <BlogListing articles={articles} categories={categories} />
+    </Suspense>
   );
 }

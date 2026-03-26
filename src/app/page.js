@@ -1,10 +1,14 @@
 import Link from "next/link";
-import { getHomePageData } from "@/lib/contentful";
+import {
+  getHomePageData,
+  isContentfulConfigured,
+} from "@/lib/contentful";
 import ArticleCard from "@/components/ArticleCard";
 
 export const revalidate = 60;
 
 export default async function HomePage() {
+  const contentfulReady = isContentfulConfigured();
   const { featuredArticles, latestArticles, categories } =
     await getHomePageData();
 
@@ -91,10 +95,37 @@ export default async function HomePage() {
           <h2 className="text-xl font-semibold text-[#2d2d2d]">
             Welcome to Khabar for India
           </h2>
-          <p className="mt-4 text-[#666]">
-            No articles yet. Add content in Contentful to see it here.
-          </p>
-          <p className="mt-2 text-sm text-[#888]">
+          {!contentfulReady ? (
+            <>
+              <p className="mt-4 text-[#666]">
+                Articles are loaded at <strong>build time</strong> from Contentful. This deploy
+                does not have Delivery API credentials, so nothing could be fetched.
+              </p>
+              <p className="mt-3 text-left text-sm text-[#666] sm:text-center">
+                In Netlify (or your host), add{" "}
+                <code className="rounded bg-[#f0f0f0] px-1.5 py-0.5">
+                  CONTENTFUL_SPACE_ID
+                </code>{" "}
+                and{" "}
+                <code className="rounded bg-[#f0f0f0] px-1.5 py-0.5">
+                  CONTENTFUL_ACCESS_TOKEN
+                </code>{" "}
+                (Content delivery / preview token, not the management token), trigger a new
+                build, then deploy the new output. `.env.local` is not uploaded to Netlify.
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="mt-4 text-[#666]">
+                No articles were returned. Publish at least one <strong>article</strong> entry in
+                Contentful (content type id <code className="rounded bg-[#f0f0f0] px-1">article</code>
+                ), then rebuild and redeploy. If entries exist, check the Delivery token has
+                access to this space and inspect build logs for Contentful errors (for example{" "}
+                <code className="rounded bg-[#f0f0f0] px-1">403</code>).
+              </p>
+            </>
+          )}
+          <p className="mt-4 text-sm text-[#888]">
             See <code className="rounded bg-[#f0f0f0] px-1.5 py-0.5">CONTENTFUL_SETUP.md</code> for
             setup instructions.
           </p>

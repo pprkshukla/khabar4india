@@ -8,6 +8,13 @@ const client =
     ? contentful.createClient({ space, accessToken })
     : null;
 
+/** True when Delivery API credentials exist (server / build only). */
+export function isContentfulConfigured() {
+  return Boolean(
+    String(space || "").trim() && String(accessToken || "").trim()
+  );
+}
+
 export async function getEntries(contentType, options = {}) {
   if (!client) return [];
   try {
@@ -17,7 +24,11 @@ export async function getEntries(contentType, options = {}) {
     });
     return res.items;
   } catch (err) {
-    console.error(`Contentful getEntries error (${contentType}):`, err.message);
+    const status = err?.response?.status;
+    console.error(
+      `Contentful getEntries error (${contentType}):`,
+      status ? `${status} ${err.message}` : err.message
+    );
     return [];
   }
 }
