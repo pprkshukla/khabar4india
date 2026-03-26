@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { richTextToPlainText } from "@/lib/richTextPlainText";
 
 function getImageUrl(asset) {
   if (!asset?.fields?.file?.url) return null;
@@ -17,16 +18,30 @@ function formatDate(dateStr) {
   });
 }
 
+/** Preview text for cards: rich Summary → plain text, or legacy Excerpt. */
+function getCardPreview(article) {
+  const summary = article?.fields?.summary;
+  if (summary) {
+    const plain = richTextToPlainText(summary);
+    if (plain) return plain;
+  }
+  return article?.fields?.excerpt || "";
+}
+
+function getCardImage(article) {
+  const asset = article?.fields?.featureImage || article?.fields?.featuredImage;
+  return asset ? getImageUrl(asset) : null;
+}
+
 export default function ArticleCard({ article, variant = "default" }) {
   const title = article?.fields?.title || "Untitled";
   const slug = article?.fields?.slug || "";
-  const excerpt = article?.fields?.excerpt || "";
+  const preview = getCardPreview(article);
   const publishedDate = article?.fields?.publishedDate || "";
   const category = article?.fields?.category?.fields?.name || "";
   const categorySlug = article?.fields?.category?.fields?.slug || "";
   const author = article?.fields?.author?.fields?.name;
-  const featuredImage = article?.fields?.featuredImage;
-  const imageUrl = featuredImage ? getImageUrl(featuredImage) : null;
+  const imageUrl = getCardImage(article);
 
   const isCompact = variant === "compact";
   const isList = variant === "list";
@@ -51,8 +66,8 @@ export default function ArticleCard({ article, variant = "default" }) {
         <h2 className="mt-1 font-semibold text-[#2d2d2d] group-hover:text-[#c0392b] line-clamp-2">
           <Link href={`/blog/${slug}`}>{title}</Link>
         </h2>
-        {excerpt && (
-          <p className="mt-1 line-clamp-2 text-sm text-[#666]">{excerpt}</p>
+        {preview && (
+          <p className="mt-1 line-clamp-2 text-sm text-[#666]">{preview}</p>
         )}
       </article>
     );
@@ -102,8 +117,8 @@ export default function ArticleCard({ article, variant = "default" }) {
         >
           <Link href={`/blog/${slug}`}>{title}</Link>
         </h2>
-        {excerpt && !isCompact && (
-          <p className="mt-2 line-clamp-2 text-sm text-[#666]">{excerpt}</p>
+        {preview && !isCompact && (
+          <p className="mt-2 line-clamp-2 text-sm text-[#666]">{preview}</p>
         )}
       </div>
     </article>

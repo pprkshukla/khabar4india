@@ -2,21 +2,23 @@
 
 This guide walks you through creating the content models and content types in Contentful so your Next.js site can display Hindu religion, history, and culture content.
 
+> **Create models via script:** You can create all content types automatically. See **[docs/CONTENT_MODELS.md#create-via-script-recommended](docs/CONTENT_MODELS.md)** — add `CONTENTFUL_MANAGEMENT_TOKEN` to `.env.local` and run `npm run contentful:create-model`.  
+> **Detailed content models:** For the full **list, structure, and step-by-step configuration** of each content type, see **[docs/CONTENT_MODELS.md](docs/CONTENT_MODELS.md)**.
+
 ---
 
 ## Step 1: Create a Contentful account and space
 
 1. Go to [contentful.com](https://www.contentful.com) and sign up or log in.
 2. Create a **new space** (e.g. “Khabar for India”).
-3. Go to **Settings → API keys** and create an API key (or use the default).
-4. Copy:
-   - **Space ID**
-   - **Content Delivery API – access token**
-5. In your project root, copy `.env.example` to `.env.local` and set:
+3. Get your **Space ID** and **Delivery API token**: go to **Settings → API keys**, open an API key (or create one), then copy **Space ID** and **Content delivery API – access token**.
+4. In your project root, copy `.env.example` to `.env.local` and set:
    ```env
    CONTENTFUL_SPACE_ID=your_space_id
    CONTENTFUL_ACCESS_TOKEN=your_delivery_api_token
    ```
+
+**Step-by-step token guide:** If the Contentful interface is confusing, see **[docs/CONTENTFUL_TOKENS_SETUP.md](docs/CONTENTFUL_TOKENS_SETUP.md)** for a full walkthrough (where to click, what to copy, and how to get the optional Content Management token for the script).
 
 ---
 
@@ -62,16 +64,19 @@ Used for blog/articles.
 
 | Field name     | Field ID        | Type        | Notes                          |
 |----------------|------------------|-------------|---------------------------------|
-| Title          | `title`          | Short text  | Required                        |
+| Title          | `title`          | Short text  | Required; main headline         |
 | Slug           | `slug`           | Short text  | Required, unique; URL path      |
-| Excerpt        | `excerpt`        | Long text   | Optional; summary for cards     |
-| Body           | `body`           | Rich text   | Required; main content          |
-| Featured Image | `featuredImage`  | Media (1)   | Optional; one image             |
 | Category       | `category`       | Reference   | Reference to **Category** (1)   |
+| Summary        | `summary`        | Rich text   | Optional; lead + card preview (plain text) |
+| Feature Image  | `featureImage`   | Media (1)   | Optional; hero + cards          |
+| Body           | `body`           | Rich text   | Required; full content, links, embedded images |
+| Related News   | `relatedNews`    | References  | Optional; many **Article**      |
 | Author         | `author`         | Reference   | Reference to **Author** (1); optional |
-| Published Date | `publishedDate`  | Date & time | Required; for ordering/display  |
-| Meta Title     | `metaTitle`      | Short text  | Optional; SEO title (falls back to Title) |
-| Meta Description | `metaDescription` | Long text | Optional; SEO description (falls back to Excerpt) |
+| Publish Date   | `publishedDate`  | Date        | Required; date-only in UI if available |
+| Meta Title     | `metaTitle`      | Short text  | Optional; SEO title             |
+| Meta Description | `metaDescription` | Long text | Optional; SEO description       |
+
+See **[docs/ARTICLE_FIELD_MIGRATION.md](docs/ARTICLE_FIELD_MIGRATION.md)** if you need to add these fields to an existing Article type. The app still accepts legacy `excerpt` and `featuredImage` as fallbacks.
 
 **Save** the content type.
 
@@ -116,7 +121,7 @@ Used for static pages (About Us, Contact Us, etc.).
 ### Articles
 
 1. **Content → Add entry → Article**
-2. Fill: Title, Slug (e.g. `intro-to-vedas`), Excerpt, Body (rich text), Category, Published Date. Optionally: Featured Image, **Author**, **Meta Title**, **Meta Description**.
+2. Fill: Title, Slug (e.g. `intro-to-vedas`), Body (rich text), Category, Publish Date. Optionally: Summary (rich text), Feature Image, Related News, **Author**, **Meta Title**, **Meta Description**.
 3. **Publish**.
 
 ### Pages
@@ -143,7 +148,7 @@ The app expects these exact field IDs:
 
 - **Category:** `name`, `slug`
 - **Author:** `name`, `role`, `bio`, `avatar`
-- **Article:** `title`, `slug`, `excerpt`, `body`, `featuredImage`, `category`, `author`, `publishedDate`, `metaTitle`, `metaDescription`
+- **Article:** `title`, `slug`, `category`, `summary`, `featureImage`, `body`, `relatedNews`, `author`, `publishedDate`, `metaTitle`, `metaDescription` (legacy: `excerpt`, `featuredImage`)
 - **Page:** `title`, `slug`, `body`, `metaTitle`, `metaDescription`
 
 If you change them in Contentful, update the code in `src/lib/contentful.js` and components (e.g. `ArticleCard.js`, `RichText.js`, page files) to use the new IDs.

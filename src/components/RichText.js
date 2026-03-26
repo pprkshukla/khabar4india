@@ -1,12 +1,41 @@
 "use client";
 
+import Image from "next/image";
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
 import { BLOCKS, INLINES } from "@contentful/rich-text-types";
 
+function embeddedAssetUrl(node) {
+  const file = node?.data?.target?.fields?.file;
+  if (!file?.url) return null;
+  const u = file.url;
+  return u.startsWith("//") ? `https:${u}` : u;
+}
+
 const options = {
   renderNode: {
+    [BLOCKS.EMBEDDED_ASSET]: (node) => {
+      const url = embeddedAssetUrl(node);
+      if (!url) return null;
+      const title = node?.data?.target?.fields?.title || "";
+      const w = node?.data?.target?.fields?.file?.details?.image?.width || 800;
+      const h = node?.data?.target?.fields?.file?.details?.image?.height || 450;
+      return (
+        <figure className="my-6">
+          <Image
+            src={url}
+            alt={title}
+            width={Math.min(w, 900)}
+            height={Math.min(h, 600)}
+            className="h-auto max-w-full rounded border border-[#e0e0e0]"
+          />
+        </figure>
+      );
+    },
     [BLOCKS.PARAGRAPH]: (node, children) => (
       <p className="mb-4 text-[#333] leading-relaxed">{children}</p>
+    ),
+    [BLOCKS.HEADING_1]: (node, children) => (
+      <h1 className="mb-3 mt-6 text-2xl font-bold text-[#2d2d2d]">{children}</h1>
     ),
     [BLOCKS.HEADING_2]: (node, children) => (
       <h2 className="mb-3 mt-6 text-xl font-semibold text-[#2d2d2d]">

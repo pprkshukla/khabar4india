@@ -3,6 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getArticleBySlug, getArticles } from "@/lib/contentful";
 import RichText from "@/components/RichText";
+import RelatedNews from "@/components/RelatedNews";
+import { richTextToPlainText } from "@/lib/richTextPlainText";
 
 export const revalidate = 60;
 
@@ -14,6 +16,7 @@ function getImageUrl(asset) {
   return url.startsWith("//") ? `https:${url}` : url;
 }
 
+/** Display publish date without time (date-only in UI). */
 function formatDate(dateStr) {
   if (!dateStr) return "";
   return new Date(dateStr).toLocaleDateString("en-IN", {
@@ -23,15 +26,23 @@ function formatDate(dateStr) {
   });
 }
 
+function getFeatureImage(article) {
+  const asset = article?.fields?.featureImage || article?.fields?.featuredImage;
+  return asset ? getImageUrl(asset) : null;
+}
+
 export async function generateMetadata({ params }) {
   const slug = params?.slug;
   if (!slug) return { title: "Article | " + SITE_NAME };
-  const article = await getArticleBySlug(slug);
+  const { article } = await getArticleBySlug(slug);
   if (!article) return { title: "Article | " + SITE_NAME };
   const title =
     article.fields?.metaTitle || article.fields?.title || "Untitled";
   const description =
-    article.fields?.metaDescription || article.fields?.excerpt || "";
+    article.fields?.metaDescription ||
+    richTextToPlainText(article.fields?.summary) ||
+    article.fields?.excerpt ||
+    "";
   return {
     title: `${title} | ${SITE_NAME}`,
     description: description.slice(0, 160),
@@ -49,17 +60,16 @@ export default async function ArticlePage({ params }) {
   const slug = params?.slug;
   if (!slug) notFound();
 
-  const article = await getArticleBySlug(slug);
+  const { article, relatedArticles } = await getArticleBySlug(slug);
   if (!article) notFound();
 
   const title = article.fields?.title || "Untitled";
   const body = article.fields?.body;
-  const excerpt = article.fields?.excerpt || "";
+  const summary = article.fields?.summary;
   const publishedDate = article.fields?.publishedDate || "";
   const category = article.fields?.category?.fields;
   const author = article.fields?.author?.fields;
-  const featuredImage = article.fields?.featuredImage;
-  const imageUrl = featuredImage ? getImageUrl(featuredImage) : null;
+  const imageUrl = getFeatureImage(article);
 
   return (
     <article className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
@@ -96,9 +106,6 @@ export default async function ArticlePage({ params }) {
         <h1 className="mt-2 text-3xl font-bold text-[#2d2d2d] sm:text-4xl">
           {title}
         </h1>
-        {excerpt && (
-          <p className="mt-4 text-lg text-[#666]">{excerpt}</p>
-        )}
       </header>
 
       {imageUrl && (
@@ -114,9 +121,17 @@ export default async function ArticlePage({ params }) {
         </div>
       )}
 
+      {summary && (
+        <div className="mb-8 rounded-lg border border-[#e0e0e0] bg-white p-5 prose-custom">
+          <RichText content={summary} />
+        </div>
+      )}
+
       <div className="prose-custom">
         {body ? <RichText content={body} /> : null}
       </div>
+
+      <RelatedNews articles={relatedArticles} />
 
       {author && (
         <footer className="mt-10 border-t border-[#e0e0e0] pt-6">

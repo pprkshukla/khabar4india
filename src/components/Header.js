@@ -1,42 +1,29 @@
+import Image from "next/image";
 import Link from "next/link";
-
-const navLinks = [
-  { href: "/", label: "Home" },
-  { href: "/blog", label: "Blog" },
-  { href: "/about", label: "About" },
-  { href: "/contact", label: "Contact Us" },
-];
+import MainNav from "@/components/MainNav";
 
 export default function Header() {
   return (
     <header className="bg-[#2d2d2d] text-white">
       <div className="mx-auto max-w-6xl px-4 py-5 sm:px-6">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <Link
-              href="/"
-              className="text-2xl font-bold tracking-tight text-white hover:text-white/95 sm:text-3xl"
-            >
-              Khabar for India
-            </Link>
-            <p className="mt-1 text-sm text-white/80">
-              Hindu Dharma · History · Culture · Methodology
-            </p>
-          </div>
-          <nav
-            className="flex flex-wrap items-center gap-6 border-t border-white/20 pt-4 sm:border-0 sm:pt-0"
-            aria-label="Main navigation"
-          >
-            {navLinks.map(({ href, label }) => (
-              <Link
-                key={href}
-                href={href}
-                className="text-sm font-medium text-white/90 transition hover:text-[#e74c3c]"
-              >
-                {label}
-              </Link>
-            ))}
-          </nav>
+        <Link
+          href="/"
+          className="inline-flex items-center transition opacity-90 hover:opacity-100"
+        >
+          <Image
+            src="/logoK4I.png"
+            alt="Khabar for India"
+            width={640}
+            height={120}
+            className="h-24 w-auto sm:h-24 md:h-45"
+            priority
+          />
+        </Link>
+        <p className="mt-2 text-sm text-white/80">
+          Hindu Dharma · History · Culture · Methodology
+        </p>
+        <div className="mt-4 border-t border-white/15 pt-3">
+          <MainNav />
         </div>
       </div>
     </header>
