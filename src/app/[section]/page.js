@@ -16,8 +16,8 @@ export function generateStaticParams() {
   }));
 }
 
-export default function SectionIndexPage({ params }) {
-  const section = params?.section;
+export default async function SectionIndexPage({ params }) {
+  const { section } = await params;
   if (!section || !isNavSection(section)) notFound();
 
   const children = getSectionChildren(section);

@@ -8,8 +8,16 @@ import Link from "next/link";
 
 export const revalidate = 60;
 
+function firstSearchParam(value) {
+  if (value == null) return null;
+  const s = Array.isArray(value) ? value[0] : value;
+  const trimmed = String(s).trim();
+  return trimmed || null;
+}
+
 export default async function BlogPage({ searchParams }) {
-  const categorySlug = searchParams?.category || null;
+  const sp = await searchParams;
+  const categorySlug = firstSearchParam(sp?.category);
   const categories = await getCategories();
 
   let articles;
@@ -51,9 +59,10 @@ export default async function BlogPage({ searchParams }) {
           {categories.map((cat) => (
             <Link
               key={cat.sys.id}
-              href={`/blog?category=${cat.fields?.slug || ""}`}
+              href={`/blog?category=${encodeURIComponent(cat.fields?.slug || "")}`}
               className={`rounded px-4 py-2 text-sm font-medium transition ${
-                categorySlug === (cat.fields?.slug || "")
+                (cat.fields?.slug || "").toLowerCase() ===
+                (categorySlug || "").toLowerCase()
                   ? "bg-[#c0392b] text-white"
                   : "bg-[#f0f0f0] text-[#2d2d2d] hover:bg-[#e0e0e0]"
               }`}

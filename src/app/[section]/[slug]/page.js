@@ -14,9 +14,8 @@ export function generateStaticParams() {
   return getAllSectionSlugParams();
 }
 
-export default function TopicPage({ params }) {
-  const section = params?.section;
-  const slug = params?.slug;
+export default async function TopicPage({ params }) {
+  const { section, slug } = await params;
   if (!section || !slug || !isNavSection(section)) notFound();
 
   const children = getSectionChildren(section);

@@ -32,7 +32,7 @@ function getFeatureImage(article) {
 }
 
 export async function generateMetadata({ params }) {
-  const slug = params?.slug;
+  const { slug } = await params;
   if (!slug) return { title: "Article | " + SITE_NAME };
   const { article } = await getArticleBySlug(slug);
   if (!article) return { title: "Article | " + SITE_NAME };
@@ -57,7 +57,7 @@ export async function generateStaticParams() {
 }
 
 export default async function ArticlePage({ params }) {
-  const slug = params?.slug;
+  const { slug } = await params;
   if (!slug) notFound();
 
   const { article, relatedArticles } = await getArticleBySlug(slug);
