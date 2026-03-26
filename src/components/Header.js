@@ -15,13 +15,13 @@ export default function Header() {
             alt="Khabar for India"
             width={640}
             height={120}
-            className="h-24 w-auto sm:h-24 md:h-45"
+            className="h-24 w-auto sm:h-24 md:h-20"
             priority
           />
         </Link>
-        <p className="mt-2 text-sm text-white/80">
+        {/* <p className="mt-2 text-sm text-white/80">
           Hindu Dharma · History · Culture · Methodology
-        </p>
+        </p> */}
         <div className="mt-4 border-t border-white/15 pt-3">
           <MainNav />
         </div>
