@@ -9,6 +9,7 @@
     "lint": "eslint",
     "contentful:create-model": "node scripts/create-content-model.js",
     "contentful:update-article": "node scripts/update-article-content-type.js",
+    "contentful:update-author": "node scripts/update-author-content-type.js",
     "contentful:verify": "node scripts/verify-contentful-tokens.js"
   },
   "dependencies": {

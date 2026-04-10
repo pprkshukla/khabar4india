@@ -68,7 +68,7 @@ async function createContentTypes(environment) {
       fields: [
         { id: "name", name: "Name", type: "Symbol", required: true, localized: false },
         { id: "role", name: "Role", type: "Symbol", required: false, localized: false },
-        { id: "bio", name: "Bio", type: "Text", required: false, localized: false },
+        { id: "bio", name: "Bio", type: "RichText", required: false, localized: false },
         {
           id: "avatar",
           name: "Avatar",

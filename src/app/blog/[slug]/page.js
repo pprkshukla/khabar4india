@@ -157,7 +157,13 @@ export default async function ArticlePage({ params }) {
                 <p className="text-sm text-[#c0392b]">{author.role}</p>
               )}
               {author.bio && (
-                <p className="mt-1 text-sm text-[#666]">{author.bio}</p>
+                <div className="mt-2 text-sm text-[#666] prose-custom">
+                  {typeof author.bio === "string" ? (
+                    <p>{author.bio}</p>
+                  ) : (
+                    <RichText content={author.bio} />
+                  )}
+                </div>
               )}
             </div>
           </div>
