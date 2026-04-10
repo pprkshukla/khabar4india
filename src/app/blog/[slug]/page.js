@@ -9,6 +9,7 @@ import { richTextToPlainText } from "@/lib/richTextPlainText";
 export const revalidate = 60;
 
 const SITE_NAME = "Khabar for India";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://khabar4india.com";
 
 function getImageUrl(asset) {
   if (!asset?.fields?.file?.url) return null;
@@ -43,9 +44,39 @@ export async function generateMetadata({ params }) {
     richTextToPlainText(article.fields?.summary) ||
     article.fields?.excerpt ||
     "";
+  const imageUrl = getFeatureImage(article);
+  const url = `${SITE_URL}/blog/${slug}`;
+  const finalDescription = description.slice(0, 160);
+
   return {
     title: `${title} | ${SITE_NAME}`,
-    description: description.slice(0, 160),
+    description: finalDescription,
+    alternates: {
+      canonical: url,
+    },
+    openGraph: {
+      type: "article",
+      url,
+      title,
+      description: finalDescription,
+      siteName: SITE_NAME,
+      images: imageUrl
+        ? [
+            {
+              url: imageUrl,
+              width: 1200,
+              height: 630,
+              alt: title,
+            },
+          ]
+        : [],
+    },
+    twitter: {
+      card: imageUrl ? "summary_large_image" : "summary",
+      title,
+      description: finalDescription,
+      images: imageUrl ? [imageUrl] : [],
+    },
   };
 }
 
