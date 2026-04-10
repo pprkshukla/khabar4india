@@ -25,6 +25,10 @@ export default function MainNav() {
     return () => window.removeEventListener("keydown", onKey);
   }, [mobileOpen, closeMobile]);
 
+  const getChildHref = (item, child) => {
+    return `/blog?tag=${encodeURIComponent(child.slug)}`;
+  };
+
   return (
     <div className="w-full">
       <div className="mb-2 flex justify-end lg:hidden">
@@ -86,7 +90,7 @@ export default function MainNav() {
                     <li key={child.slug} role="none">
                       <Link
                         role="menuitem"
-                        href={`/${item.section}/${child.slug}`}
+                        href={getChildHref(item, child)}
                         className="block px-4 py-2.5 text-sm text-white/90 transition hover:bg-[#e74c3c]/20 hover:text-[#e74c3c]"
                       >
                         {child.label}
@@ -160,7 +164,7 @@ export default function MainNav() {
                     {item.children.map((child) => (
                       <li key={child.slug}>
                         <Link
-                          href={`/${item.section}/${child.slug}`}
+                          href={getChildHref(item, child)}
                           onClick={closeMobile}
                           className="block py-2 text-sm text-white/85 hover:text-[#e74c3c]"
                         >

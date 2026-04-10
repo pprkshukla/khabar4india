@@ -114,6 +114,16 @@ async function createContentTypes(environment) {
         },
         { id: "summary", name: "Summary", type: "RichText", required: false, localized: false },
         {
+          id: "tags",
+          name: "Tags",
+          type: "Array",
+          required: false,
+          localized: false,
+          items: {
+            type: "Symbol",
+          },
+        },
+        {
           id: "featureImage",
           name: "Feature Image",
           type: "Link",

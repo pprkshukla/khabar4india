@@ -43,6 +43,16 @@ const FIELDS_TO_ENSURE = [
     localized: false,
   },
   {
+    id: "tags",
+    name: "Tags",
+    type: "Array",
+    required: false,
+    localized: false,
+    items: {
+      type: "Symbol",
+    },
+  },
+  {
     id: "relatedNews",
     name: "Related News",
     type: "Array",
