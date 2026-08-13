@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import {
   getHomePageData,
   isContentfulConfigured,
@@ -14,6 +15,9 @@ export default async function HomePage() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+      {/* 2. Simply add the component with your ID */}
+      <GoogleAnalytics gaId="G-P9TESW6QVB" />
+
       {featuredArticles?.length > 0 ? (
         <div className="grid gap-8 lg:grid-cols-3">
           {/* Main content - two columns */}
